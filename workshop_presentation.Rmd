@@ -12,6 +12,8 @@ df_print: kable
 knitr::opts_chunk$set(echo = FALSE, cache=TRUE)
 library(tidyr)
 library(dplyr)
+library(ggplot2)
+theme_set(theme_classic())
 ```
 
 Normal data manipulation in R
@@ -37,6 +39,7 @@ seeds$Collection.Date <- as.Date(seeds$Collection.Date,origin='2012-01-01')
 Data manipulation using dplyr/tidyr
 ---
 ```{r, echo=T,tidy=T,eval=F}
+library(dplyr); library(tidyr);
 #Convert factors in plants df
 plants <- mutate(plants,Species=factor(Species),Plant.Code=factor(Plant.Code))
 #Convert factors in seeds df
@@ -286,28 +289,56 @@ iris %>% group_by(Species) %>%
 Exercises!
 ---
 Using the *iris* dataset:
+
 - Make 2 new "area" columns, which are length x width
 
 Using the *InsectSprays* dataset:
+
 - Find the mean and SD of each type of spray
 
 Using the *CO2* dataset:
+
 - Select only plants from Quebec, then:
+
 - Change the uptake dataset from long to wide format (each plant should have its own column), with a column at the beginning showing concentration
 
-Final remarks
+Final remarks {.columns-2 .smaller}
 ---
+
 - dplyr & tidyr interface well with other parts of the tidyverse
-```{r,echo=T,tidy=F,eval=T,message=F,warning=F}
+
+```{r,echo=T,tidy=F,eval=T,message=F,warning=F,fig.height = 4, fig.width = 5, fig.align = "center"}
 library(ggplot2)
-theme_set(theme_classic())
 CO2 %>% filter(conc==1000) %>% 
   group_by(Type,Treatment) %>% 
-  summarize(meanUp=mean(uptake),maxUp=max(uptake),minUp=min(uptake)) %>% 
+  summarize(meanUp=mean(uptake),
+            maxUp=max(uptake),
+            minUp=min(uptake)) %>% 
+  #Code for ggplot begins here
   ggplot(aes(x=Type,col=Treatment))+
   geom_pointrange(aes(y=meanUp,ymax=maxUp,ymin=minUp))+
   labs(x='Area',y='Uptake at 1000ppm')+
   scale_colour_manual(values=c('red','blue'))
+```
+
+Final remarks {.columns-2 .smaller}
+---
+- dplyr & tidyr can pass data frames to and from other functions: use '.' operator
+```{r,echo=T,tidy=F,eval=T,message=F,warning=F,fig.height = 4, fig.width = 5, fig.align = "center"}
+co2mod <- CO2 %>% 
+  filter(Type=='Quebec') %>% data.frame() %>% 
+  #Code for nls begins here
+  nls(uptake~SSasymp(conc,A,B,C),
+      start=list(A=40,B=-25,C=-5),data=.)
+
+data.frame(conc=seq(50,1000,20)) %>% 
+  predict(co2mod,newdata=.) %>% 
+  data.frame(conc=seq(50,1000,20),predUp=.) %>% 
+  #Code for ggplot begins here
+  ggplot(aes(conc,predUp))+
+  geom_line()+
+  geom_point(data=filter(CO2,Type=='Quebec'),
+             aes(conc,uptake))+
+  labs(x='CO2 Concentration',y='Uptake')
   
 ```
-***
