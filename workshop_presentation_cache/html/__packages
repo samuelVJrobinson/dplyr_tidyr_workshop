@@ -1,5 +1,5 @@
 base
 tidyr
 dplyr
-bindrcpp
 ggplot2
+bindrcpp

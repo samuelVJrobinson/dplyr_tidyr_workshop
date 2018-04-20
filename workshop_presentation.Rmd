@@ -2,7 +2,7 @@
 title: 'Intro to *data wrangling*' 
 subtitle: 'dplyr & tidyr workshop'
 author: "Sam Robinson"
-date: "April 13, 2018"
+date: "April 20, 2018"
 output: ioslides_presentation
 widescreen: true
 df_print: kable
@@ -165,6 +165,21 @@ irisTemp2 <- transmute(iris,P.Width2=(Petal.Width^2))
 head(irisTemp2,3) #Same as mutate, but drops other columns
 ```
 
+Exercises!
+---
+Using the *iris* dataset:
+
+- Filter only "virginica" rows
+- Make 2 new "area" columns, which are length $\times$ width of Petals and Sepals
+- Get rid of all columns except "Species" + 2 new columns
+
+```{r,echo=F}
+ iris %>% filter(Species=='virginica') %>%
+  transmute(Species,P.Area=Petal.Length*Petal.Width,S.Area=Sepal.Length*Sepal.Width) %>% 
+  head(10)
+```
+
+
 Piping - %>% 
 ---
 - Takes data from one verb and passes it to the next one
@@ -178,7 +193,7 @@ head(irisTemp)
 
 Reshaping
 ---
-- This is tedious to do in base R, and often impossible to do in Excel
+- This is very tedious to do in base R and Excel
 - Reshaping operations in tidyr make this much easier
 - Four main commands:
 1. **gather** - gather columns into rows ('long format')
@@ -188,34 +203,42 @@ Reshaping
 
 Reshaping - *gather*: columns to rows
 ---
-```{r,echo=T,tidy=T,eval=T,message=F,warning=F}
+- Make some data in "wide" format
+```{r,echo=T,tidy=F,eval=T,message=F,warning=F}
 #Some fake data to work with
-(stocks <- data.frame(time = as.Date('2009-01-01') + 0:4,X = rnorm(5, 0, 1),Y = rnorm(5, 0, 2)))
+(fake <- data.frame(time = as.Date('2009-01-01') + 0:4,
+                      X = rnorm(5, 0, 1),Y = rnorm(5, 0, 2)))
 ```
 
 Reshaping - *gather*: columns to rows
 ---
+- Change "wide" dataframe to "long" dataframe
 ```{r,echo=T,tidy=T,eval=T,message=F,warning=F}
-(stocksm <- gather(stocks,stock, price, -time))
+(fakeLong <- gather(fake,type, measurement, -time))
 ```
 
 Reshaping - *spread*: rows to columns
 ---
 ```{r,echo=T,tidy=F,eval=T,message=F,warning=F}
-stocksm <- gather(stocks,stock, price, -time)
-stocksm %>% spread(stock, price)
-stocksm %>% spread(time, price)
+fakeLong <- gather(fake,type, measurement, -time)
+fakeLong %>% spread(type, measurement)
+fakeLong %>% spread(time, measurement) #What has this done?
 #Note: this must have unique row identifiers
 ```
 
 Reshaping - *unite*: many columns into one
 ---
+- Useful when combined with other reshaping functions
+
 ```{r,echo=T,tidy=F,eval=T,message=F,warning=F}
-irisTemp <- iris %>% unite(newCol,Sepal.Length:Petal.Width,sep='_') %>% head(10)
-#Useful when combined with other reshaping functions
+irisTemp <- iris %>% unite(newCol,Sepal.Length:Petal.Width,sep='_') 
+head(irisTemp,10)
+
 ```
+
 Reshaping - *separate*: one column into many
 ---
+
 ```{r,echo=T,tidy=F,eval=T,message=F,warning=F}
 irisTemp %>% separate(newCol,c('SLength','SWidth','PLength','PWidth'),sep='_')
 ```
@@ -236,6 +259,22 @@ Reshaping - combinations of reshaping functions
 irisTemp %>% gather('Type','Measurement',sepals:petals) %>% 
   separate(Measurement,c('Length','Width'),sep='_',convert=T) %>% 
   head(10)
+```
+
+Exercises!
+---
+Using the *CO2* dataset:
+
+- Select only _non-chilled_ plants from _Quebec_
+- Pipe data frame to next command
+- Change the uptake dataset from long to wide format (each plant should have its own column), with a column at the beginning showing concentration
+- Hint: _filter_ rows and _select_ columns you need, then _spread_ to wide format
+
+```{r,echo=F}
+CO2 %>% 
+  filter(Type=='Quebec',Treatment=='nonchilled') %>% 
+  select(-Type,-Treatment) %>% 
+  spread(Plant,uptake)
 ```
 
 Grouping 
@@ -288,19 +327,18 @@ iris %>% group_by(Species) %>%
 
 Exercises!
 ---
-Using the *iris* dataset:
-
-- Make 2 new "area" columns, which are length x width
-
 Using the *InsectSprays* dataset:
 
-- Find the mean and SD of each type of spray
+- Find the mean and SD of each type of spray type
+- Reshape dataframe so that each spray has its own column, with mean and SD in separate rows
+- Hint: get summary stats first, then _gather_ and _spread_
 
-Using the *CO2* dataset:
-
-- Select only plants from Quebec, then:
-
-- Change the uptake dataset from long to wide format (each plant should have its own column), with a column at the beginning showing concentration
+```{r,echo=F}
+InsectSprays %>% group_by(spray) %>% 
+  summarize(mean=mean(count),sd=sd(count)) %>% 
+  gather('stat','meas',mean:sd) %>% 
+  spread(spray,meas)
+```
 
 Final remarks {.columns-2 .smaller}
 ---

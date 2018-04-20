@@ -10,7 +10,7 @@
 
 
 
-  <meta name="date" content="2018-04-13" />
+  <meta name="date" content="2018-04-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -95,7 +95,7 @@
       <h1 data-config-title><!-- populated from slide_config.json --></h1>
       <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
       <p data-config-presenter><!-- populated from slide_config.json --></p>
-            <p style="margin-top: 6px; margin-left: -2px;">April 13, 2018</p>
+            <p style="margin-top: 6px; margin-left: -2px;">April 20, 2018</p>
           </hgroup>
   </slide>
 
@@ -352,6 +352,28 @@ head(irisTemp2, 3)  #Same as mutate, but drops other columns</pre>
 ## 2     0.04
 ## 3     0.04</pre>
 
+</article></slide><slide class=""><hgroup><h2>Exercises!</h2></hgroup><article  id="exercises">
+
+<p>Using the <em>iris</em> dataset:</p>
+
+<ul>
+<li>Filter only &quot;virginica&quot; rows</li>
+<li>Make 2 new &quot;area&quot; columns, which are length \(\times\) width of Petals and Sepals</li>
+<li>Get rid of all columns except &quot;Species&quot; + 2 new columns</li>
+</ul>
+
+<pre >##      Species P.Area S.Area
+## 1  virginica  15.00  20.79
+## 2  virginica   9.69  15.66
+## 3  virginica  12.39  21.30
+## 4  virginica  10.08  18.27
+## 5  virginica  12.76  19.50
+## 6  virginica  13.86  22.80
+## 7  virginica   7.65  12.25
+## 8  virginica  11.34  21.17
+## 9  virginica  10.44  16.75
+## 10 virginica  15.25  25.92</pre>
+
 </article></slide><slide class=""><hgroup><h2>Piping - %&gt;%</h2></hgroup><article  id="piping--">
 
 <ul>
@@ -375,7 +397,7 @@ head(irisTemp)</pre>
 </article></slide><slide class=""><hgroup><h2>Reshaping</h2></hgroup><article  id="reshaping">
 
 <ul>
-<li>This is tedious to do in base R, and often impossible to do in Excel</li>
+<li>This is very tedious to do in base R and Excel</li>
 <li>Reshaping operations in tidyr make this much easier</li>
 <li>Four main commands:</li>
 </ul>
@@ -389,73 +411,237 @@ head(irisTemp)</pre>
 
 </article></slide><slide class=""><hgroup><h2>Reshaping - <em>gather</em>: columns to rows</h2></hgroup><article  id="reshaping---gather-columns-to-rows">
 
-<pre class = 'prettyprint lang-r'># Some fake data to work with
-(stocks &lt;- data.frame(time = as.Date(&quot;2009-01-01&quot;) + 0:4, X = rnorm(5, 0, 1), 
-    Y = rnorm(5, 0, 2)))</pre>
+<ul>
+<li>Make some data in &quot;wide&quot; format</li>
+</ul>
 
-<pre >##         time           X          Y
-## 1 2009-01-01  0.26674979  0.4122545
-## 2 2009-01-02  0.73122592  0.2912350
-## 3 2009-01-03 -0.05875671 -0.5737174
-## 4 2009-01-04 -1.10948075  2.9702386
-## 5 2009-01-05  0.64188828  0.4514185</pre>
+<pre class = 'prettyprint lang-r'>#Some fake data to work with
+(fake &lt;- data.frame(time = as.Date(&#39;2009-01-01&#39;) + 0:4,
+                      X = rnorm(5, 0, 1),Y = rnorm(5, 0, 2)))</pre>
+
+<pre >##         time             X          Y
+## 1 2009-01-01 -0.2990921006  1.0675986
+## 2 2009-01-02 -1.0358757365 -0.7773559
+## 3 2009-01-03  1.1283030754 -0.4582967
+## 4 2009-01-04 -1.1025806215 -0.2565181
+## 5 2009-01-05  0.0006298519  1.3281489</pre>
 
 </article></slide><slide class=""><hgroup><h2>Reshaping - <em>gather</em>: columns to rows</h2></hgroup><article  id="reshaping---gather-columns-to-rows-1">
 
-<pre class = 'prettyprint lang-r'>(stocksm &lt;- gather(stocks, stock, price, -time))</pre>
+<ul>
+<li>Change &quot;wide&quot; dataframe to &quot;long&quot; dataframe</li>
+</ul>
 
-<pre >##          time stock       price
-## 1  2009-01-01     X  0.26674979
-## 2  2009-01-02     X  0.73122592
-## 3  2009-01-03     X -0.05875671
-## 4  2009-01-04     X -1.10948075
-## 5  2009-01-05     X  0.64188828
-## 6  2009-01-01     Y  0.41225454
-## 7  2009-01-02     Y  0.29123503
-## 8  2009-01-03     Y -0.57371737
-## 9  2009-01-04     Y  2.97023861
-## 10 2009-01-05     Y  0.45141848</pre>
+<pre class = 'prettyprint lang-r'>(fakeLong &lt;- gather(fake, type, measurement, -time))</pre>
+
+<pre >##          time type   measurement
+## 1  2009-01-01    X -0.2990921006
+## 2  2009-01-02    X -1.0358757365
+## 3  2009-01-03    X  1.1283030754
+## 4  2009-01-04    X -1.1025806215
+## 5  2009-01-05    X  0.0006298519
+## 6  2009-01-01    Y  1.0675985860
+## 7  2009-01-02    Y -0.7773559434
+## 8  2009-01-03    Y -0.4582967281
+## 9  2009-01-04    Y -0.2565181138
+## 10 2009-01-05    Y  1.3281488806</pre>
 
 </article></slide><slide class=""><hgroup><h2>Reshaping - <em>spread</em>: rows to columns</h2></hgroup><article  id="reshaping---spread-rows-to-columns">
 
-<pre class = 'prettyprint lang-r'>stocksm &lt;- gather(stocks,stock, price, -time)
-stocksm %&gt;% spread(stock, price)</pre>
+<pre class = 'prettyprint lang-r'>fakeLong &lt;- gather(fake,type, measurement, -time)
+fakeLong %&gt;% spread(type, measurement)</pre>
 
-<pre >##         time           X          Y
-## 1 2009-01-01  0.26674979  0.4122545
-## 2 2009-01-02  0.73122592  0.2912350
-## 3 2009-01-03 -0.05875671 -0.5737174
-## 4 2009-01-04 -1.10948075  2.9702386
-## 5 2009-01-05  0.64188828  0.4514185</pre>
+<pre >##         time             X          Y
+## 1 2009-01-01 -0.2990921006  1.0675986
+## 2 2009-01-02 -1.0358757365 -0.7773559
+## 3 2009-01-03  1.1283030754 -0.4582967
+## 4 2009-01-04 -1.1025806215 -0.2565181
+## 5 2009-01-05  0.0006298519  1.3281489</pre>
 
-<pre class = 'prettyprint lang-r'>stocksm %&gt;% spread(time, price)</pre>
+<pre class = 'prettyprint lang-r'>fakeLong %&gt;% spread(time, measurement) #What has this done?</pre>
 
-<pre >##   stock 2009-01-01 2009-01-02  2009-01-03 2009-01-04 2009-01-05
-## 1     X  0.2667498  0.7312259 -0.05875671  -1.109481  0.6418883
-## 2     Y  0.4122545  0.2912350 -0.57371737   2.970239  0.4514185</pre>
+<pre >##   type 2009-01-01 2009-01-02 2009-01-03 2009-01-04   2009-01-05
+## 1    X -0.2990921 -1.0358757  1.1283031 -1.1025806 0.0006298519
+## 2    Y  1.0675986 -0.7773559 -0.4582967 -0.2565181 1.3281488806</pre>
 
 <pre class = 'prettyprint lang-r'>#Note: this must have unique row identifiers</pre>
 
 </article></slide><slide class=""><hgroup><h2>Reshaping - <em>unite</em>: many columns into one</h2></hgroup><article  id="reshaping---unite-many-columns-into-one">
 
-<pre class = 'prettyprint lang-r'>irisTemp &lt;- iris %&gt;% unite(newCol,Sepal.Length:Petal.Width,sep=&#39;_&#39;) %&gt;% head(10)
-#Useful when combined with other reshaping functions</pre>
+<ul>
+<li>Useful when combined with other reshaping functions</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>irisTemp &lt;- iris %&gt;% unite(newCol,Sepal.Length:Petal.Width,sep=&#39;_&#39;) 
+head(irisTemp,10)</pre>
+
+<pre >##             newCol Species
+## 1  5.1_3.5_1.4_0.2  setosa
+## 2    4.9_3_1.4_0.2  setosa
+## 3  4.7_3.2_1.3_0.2  setosa
+## 4  4.6_3.1_1.5_0.2  setosa
+## 5    5_3.6_1.4_0.2  setosa
+## 6  5.4_3.9_1.7_0.4  setosa
+## 7  4.6_3.4_1.4_0.3  setosa
+## 8    5_3.4_1.5_0.2  setosa
+## 9  4.4_2.9_1.4_0.2  setosa
+## 10 4.9_3.1_1.5_0.1  setosa</pre>
 
 </article></slide><slide class=""><hgroup><h2>Reshaping - <em>separate</em>: one column into many</h2></hgroup><article  id="reshaping---separate-one-column-into-many">
 
 <pre class = 'prettyprint lang-r'>irisTemp %&gt;% separate(newCol,c(&#39;SLength&#39;,&#39;SWidth&#39;,&#39;PLength&#39;,&#39;PWidth&#39;),sep=&#39;_&#39;)</pre>
 
-<pre >##    SLength SWidth PLength PWidth Species
-## 1      5.1    3.5     1.4    0.2  setosa
-## 2      4.9      3     1.4    0.2  setosa
-## 3      4.7    3.2     1.3    0.2  setosa
-## 4      4.6    3.1     1.5    0.2  setosa
-## 5        5    3.6     1.4    0.2  setosa
-## 6      5.4    3.9     1.7    0.4  setosa
-## 7      4.6    3.4     1.4    0.3  setosa
-## 8        5    3.4     1.5    0.2  setosa
-## 9      4.4    2.9     1.4    0.2  setosa
-## 10     4.9    3.1     1.5    0.1  setosa</pre>
+<pre >##     SLength SWidth PLength PWidth    Species
+## 1       5.1    3.5     1.4    0.2     setosa
+## 2       4.9      3     1.4    0.2     setosa
+## 3       4.7    3.2     1.3    0.2     setosa
+## 4       4.6    3.1     1.5    0.2     setosa
+## 5         5    3.6     1.4    0.2     setosa
+## 6       5.4    3.9     1.7    0.4     setosa
+## 7       4.6    3.4     1.4    0.3     setosa
+## 8         5    3.4     1.5    0.2     setosa
+## 9       4.4    2.9     1.4    0.2     setosa
+## 10      4.9    3.1     1.5    0.1     setosa
+## 11      5.4    3.7     1.5    0.2     setosa
+## 12      4.8    3.4     1.6    0.2     setosa
+## 13      4.8      3     1.4    0.1     setosa
+## 14      4.3      3     1.1    0.1     setosa
+## 15      5.8      4     1.2    0.2     setosa
+## 16      5.7    4.4     1.5    0.4     setosa
+## 17      5.4    3.9     1.3    0.4     setosa
+## 18      5.1    3.5     1.4    0.3     setosa
+## 19      5.7    3.8     1.7    0.3     setosa
+## 20      5.1    3.8     1.5    0.3     setosa
+## 21      5.4    3.4     1.7    0.2     setosa
+## 22      5.1    3.7     1.5    0.4     setosa
+## 23      4.6    3.6       1    0.2     setosa
+## 24      5.1    3.3     1.7    0.5     setosa
+## 25      4.8    3.4     1.9    0.2     setosa
+## 26        5      3     1.6    0.2     setosa
+## 27        5    3.4     1.6    0.4     setosa
+## 28      5.2    3.5     1.5    0.2     setosa
+## 29      5.2    3.4     1.4    0.2     setosa
+## 30      4.7    3.2     1.6    0.2     setosa
+## 31      4.8    3.1     1.6    0.2     setosa
+## 32      5.4    3.4     1.5    0.4     setosa
+## 33      5.2    4.1     1.5    0.1     setosa
+## 34      5.5    4.2     1.4    0.2     setosa
+## 35      4.9    3.1     1.5    0.2     setosa
+## 36        5    3.2     1.2    0.2     setosa
+## 37      5.5    3.5     1.3    0.2     setosa
+## 38      4.9    3.6     1.4    0.1     setosa
+## 39      4.4      3     1.3    0.2     setosa
+## 40      5.1    3.4     1.5    0.2     setosa
+## 41        5    3.5     1.3    0.3     setosa
+## 42      4.5    2.3     1.3    0.3     setosa
+## 43      4.4    3.2     1.3    0.2     setosa
+## 44        5    3.5     1.6    0.6     setosa
+## 45      5.1    3.8     1.9    0.4     setosa
+## 46      4.8      3     1.4    0.3     setosa
+## 47      5.1    3.8     1.6    0.2     setosa
+## 48      4.6    3.2     1.4    0.2     setosa
+## 49      5.3    3.7     1.5    0.2     setosa
+## 50        5    3.3     1.4    0.2     setosa
+## 51        7    3.2     4.7    1.4 versicolor
+## 52      6.4    3.2     4.5    1.5 versicolor
+## 53      6.9    3.1     4.9    1.5 versicolor
+## 54      5.5    2.3       4    1.3 versicolor
+## 55      6.5    2.8     4.6    1.5 versicolor
+## 56      5.7    2.8     4.5    1.3 versicolor
+## 57      6.3    3.3     4.7    1.6 versicolor
+## 58      4.9    2.4     3.3      1 versicolor
+## 59      6.6    2.9     4.6    1.3 versicolor
+## 60      5.2    2.7     3.9    1.4 versicolor
+## 61        5      2     3.5      1 versicolor
+## 62      5.9      3     4.2    1.5 versicolor
+## 63        6    2.2       4      1 versicolor
+## 64      6.1    2.9     4.7    1.4 versicolor
+## 65      5.6    2.9     3.6    1.3 versicolor
+## 66      6.7    3.1     4.4    1.4 versicolor
+## 67      5.6      3     4.5    1.5 versicolor
+## 68      5.8    2.7     4.1      1 versicolor
+## 69      6.2    2.2     4.5    1.5 versicolor
+## 70      5.6    2.5     3.9    1.1 versicolor
+## 71      5.9    3.2     4.8    1.8 versicolor
+## 72      6.1    2.8       4    1.3 versicolor
+## 73      6.3    2.5     4.9    1.5 versicolor
+## 74      6.1    2.8     4.7    1.2 versicolor
+## 75      6.4    2.9     4.3    1.3 versicolor
+## 76      6.6      3     4.4    1.4 versicolor
+## 77      6.8    2.8     4.8    1.4 versicolor
+## 78      6.7      3       5    1.7 versicolor
+## 79        6    2.9     4.5    1.5 versicolor
+## 80      5.7    2.6     3.5      1 versicolor
+## 81      5.5    2.4     3.8    1.1 versicolor
+## 82      5.5    2.4     3.7      1 versicolor
+## 83      5.8    2.7     3.9    1.2 versicolor
+## 84        6    2.7     5.1    1.6 versicolor
+## 85      5.4      3     4.5    1.5 versicolor
+## 86        6    3.4     4.5    1.6 versicolor
+## 87      6.7    3.1     4.7    1.5 versicolor
+## 88      6.3    2.3     4.4    1.3 versicolor
+## 89      5.6      3     4.1    1.3 versicolor
+## 90      5.5    2.5       4    1.3 versicolor
+## 91      5.5    2.6     4.4    1.2 versicolor
+## 92      6.1      3     4.6    1.4 versicolor
+## 93      5.8    2.6       4    1.2 versicolor
+## 94        5    2.3     3.3      1 versicolor
+## 95      5.6    2.7     4.2    1.3 versicolor
+## 96      5.7      3     4.2    1.2 versicolor
+## 97      5.7    2.9     4.2    1.3 versicolor
+## 98      6.2    2.9     4.3    1.3 versicolor
+## 99      5.1    2.5       3    1.1 versicolor
+## 100     5.7    2.8     4.1    1.3 versicolor
+## 101     6.3    3.3       6    2.5  virginica
+## 102     5.8    2.7     5.1    1.9  virginica
+## 103     7.1      3     5.9    2.1  virginica
+## 104     6.3    2.9     5.6    1.8  virginica
+## 105     6.5      3     5.8    2.2  virginica
+## 106     7.6      3     6.6    2.1  virginica
+## 107     4.9    2.5     4.5    1.7  virginica
+## 108     7.3    2.9     6.3    1.8  virginica
+## 109     6.7    2.5     5.8    1.8  virginica
+## 110     7.2    3.6     6.1    2.5  virginica
+## 111     6.5    3.2     5.1      2  virginica
+## 112     6.4    2.7     5.3    1.9  virginica
+## 113     6.8      3     5.5    2.1  virginica
+## 114     5.7    2.5       5      2  virginica
+## 115     5.8    2.8     5.1    2.4  virginica
+## 116     6.4    3.2     5.3    2.3  virginica
+## 117     6.5      3     5.5    1.8  virginica
+## 118     7.7    3.8     6.7    2.2  virginica
+## 119     7.7    2.6     6.9    2.3  virginica
+## 120       6    2.2       5    1.5  virginica
+## 121     6.9    3.2     5.7    2.3  virginica
+## 122     5.6    2.8     4.9      2  virginica
+## 123     7.7    2.8     6.7      2  virginica
+## 124     6.3    2.7     4.9    1.8  virginica
+## 125     6.7    3.3     5.7    2.1  virginica
+## 126     7.2    3.2       6    1.8  virginica
+## 127     6.2    2.8     4.8    1.8  virginica
+## 128     6.1      3     4.9    1.8  virginica
+## 129     6.4    2.8     5.6    2.1  virginica
+## 130     7.2      3     5.8    1.6  virginica
+## 131     7.4    2.8     6.1    1.9  virginica
+## 132     7.9    3.8     6.4      2  virginica
+## 133     6.4    2.8     5.6    2.2  virginica
+## 134     6.3    2.8     5.1    1.5  virginica
+## 135     6.1    2.6     5.6    1.4  virginica
+## 136     7.7      3     6.1    2.3  virginica
+## 137     6.3    3.4     5.6    2.4  virginica
+## 138     6.4    3.1     5.5    1.8  virginica
+## 139       6      3     4.8    1.8  virginica
+## 140     6.9    3.1     5.4    2.1  virginica
+## 141     6.7    3.1     5.6    2.4  virginica
+## 142     6.9    3.1     5.1    2.3  virginica
+## 143     5.8    2.7     5.1    1.9  virginica
+## 144     6.8    3.2     5.9    2.3  virginica
+## 145     6.7    3.3     5.7    2.5  virginica
+## 146     6.7      3     5.2    2.3  virginica
+## 147     6.3    2.5       5    1.9  virginica
+## 148     6.5      3     5.2      2  virginica
+## 149     6.2    3.4     5.4    2.3  virginica
+## 150     5.9      3     5.1    1.8  virginica</pre>
 
 </article></slide><slide class=""><hgroup><h2>Reshaping - combinations of reshaping functions</h2></hgroup><article  id="reshaping---combinations-of-reshaping-functions">
 
@@ -498,6 +684,26 @@ stocksm %&gt;% spread(stock, price)</pre>
 ## 8   setosa sepals    5.0   3.4
 ## 9   setosa sepals    4.4   2.9
 ## 10  setosa sepals    4.9   3.1</pre>
+
+</article></slide><slide class=""><hgroup><h2>Exercises!</h2></hgroup><article  id="exercises-1">
+
+<p>Using the <em>CO2</em> dataset:</p>
+
+<ul>
+<li>Select only <em>non-chilled</em> plants from <em>Quebec</em></li>
+<li>Pipe data frame to next command</li>
+<li>Change the uptake dataset from long to wide format (each plant should have its own column), with a column at the beginning showing concentration</li>
+<li>Hint: <em>filter</em> rows and <em>select</em> columns you need, then <em>spread</em> to wide format</li>
+</ul>
+
+<pre >##   conc  Qn1  Qn2  Qn3
+## 1   95 16.0 13.6 16.2
+## 2  175 30.4 27.3 32.4
+## 3  250 34.8 37.1 40.3
+## 4  350 37.2 41.8 42.1
+## 5  500 35.3 40.6 42.9
+## 6  675 39.2 41.4 43.9
+## 7 1000 39.7 44.3 45.5</pre>
 
 </article></slide><slide class=""><hgroup><h2>Grouping</h2></hgroup><article  id="grouping">
 
@@ -605,26 +811,21 @@ stocksm %&gt;% spread(stock, price)</pre>
 <li>You can use most of the subset and window functions across groups</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Exercises!</h2></hgroup><article  id="exercises">
-
-<p>Using the <em>iris</em> dataset:</p>
-
-<ul>
-<li>Make 2 new &quot;area&quot; columns, which are length x width</li>
-</ul>
+</article></slide><slide class=""><hgroup><h2>Exercises!</h2></hgroup><article  id="exercises-2">
 
 <p>Using the <em>InsectSprays</em> dataset:</p>
 
 <ul>
-<li>Find the mean and SD of each type of spray</li>
+<li>Find the mean and SD of each type of spray type</li>
+<li>Reshape dataframe so that each spray has its own column, with mean and SD in separate rows</li>
+<li>Hint: get summary stats first, then <em>gather</em> and <em>spread</em></li>
 </ul>
 
-<p>Using the <em>CO2</em> dataset:</p>
-
-<ul>
-<li><p>Select only plants from Quebec, then:</p></li>
-<li><p>Change the uptake dataset from long to wide format (each plant should have its own column), with a column at the beginning showing concentration</p></li>
-</ul>
+<pre >## # A tibble: 2 x 7
+##   stat      A     B     C     D     E     F
+##   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 mean  14.5  15.3   2.08  4.92  3.50 16.7 
+## 2 sd     4.72  4.27  1.98  2.50  1.73  6.21</pre>
 
 </article></slide><slide class=""><hgroup><h2>Final remarks</h2></hgroup><article  id="final-remarks" class="columns-2 smaller">
 
